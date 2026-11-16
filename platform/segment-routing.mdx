@@ -62,7 +62,7 @@ An SRv6 address isn't only a destination. Its bits are split into parts that tel
 - **Function** says what that node does with the packet, such as unwrap it and deliver it into a private network.
 - **Argument** says which private network on that node receives it.
 
-Datum uses a compact form of SRv6 called *micro-segments* (uSID), which packs instructions tightly into each address.
+The layout borrows its block and node sizes from a compact form of SRv6 called *micro-segments* (uSID). Datum doesn't compress several segments into one address, though. Each packet carries exactly one SRv6 address, and the routers in between forward it without reading or rewriting it.
 
 ## Expand the scope: private networks on a shared backbone
 
