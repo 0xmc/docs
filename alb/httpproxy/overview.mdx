@@ -1,5 +1,5 @@
 ---
-title: "HTTPProxy and WAF Capabilities"
+title: "HTTPProxy and WAF capabilities"
 description: "Reference overview of the HTTPProxy and TrafficProtectionPolicy resources that make up Datum's Application Load Balancer."
 sidebarTitle: "HTTPProxy"
 ---
@@ -13,7 +13,7 @@ Datum's Application Load Balancer consists of two primary resources that work to
 - **`HTTPProxy`** — Layer 7 routing and traffic control
 - **`TrafficProtectionPolicy`** — [OWASP Core Rule Set](https://coreruleset.org/) WAF protection
 
-Together with the Gateway the network-services operator creates from the HTTPProxy (same name), these are what make up an ALB today. Optional basic auth adds a `SecurityPolicy` and Secret. See the [overview](/alb/overview#what-an-alb-is-made-of) for the full composition diagram.
+Together with the Gateway the network-services operator creates from the HTTPProxy (same name), these are what make up an ALB today. Optional Basic Auth adds a `SecurityPolicy` and Secret. See the [overview](/alb/overview#what-an-alb-is-made-of) for the full composition diagram.
 
 The proxy determines where traffic goes and how requests are shaped before reaching your origin. The WAF determines whether traffic is observed or blocked based on security rules. The WAF attaches to a proxy using `targetRefs`.
 
