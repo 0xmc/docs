@@ -370,8 +370,10 @@ Each entry links to the original announcement in our [changelog discussions](htt
   [Read the announcement](https://github.com/orgs/datum-cloud/discussions/306)
 </Update>
 
-<Update label="October 13, 2026" description="datumctl v0.22.0" tags={["Release"]}>
+<Update label="October 13, 2026" description="datumctl" tags={["Release"]}>
   ## Upgrade every plugin in one command
+
+  datumctl v0.22.0 can upgrade all of your plugins at once.
 
   - `datumctl plugin upgrade --all` upgrades every installed plugin that has a newer release and skips the rest.
   - Each plugin is fetched from the catalog or GitHub repository it was installed from, with the same checksum and compatibility checks as a fresh install.
