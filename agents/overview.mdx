@@ -5,6 +5,28 @@ description: "How AI agents work with Datum Cloud: Skills, Datum MCP, llms.txt, 
 
 Datum is built for agents as first-class users. Rather than wrapping an API in a chat interface, Datum exposes the same primitives people use, such as YAML manifests, `datumctl` commands, and [Kubernetes-style resources](/platform/kubernetes), in ways that agents can reason about reliably. This section covers the surfaces agents use to work with Datum.
 
+## Onboard your agent from the Cloud Portal
+
+You can set up a coding agent, such as Claude Code, Codex, Cursor, or GitHub Copilot, from your project's home page in the Cloud Portal.
+
+1. Open your project in the [Cloud Portal](https://cloud.datum.net).
+2. On the project home page, click **Onboard your agent to Datum**. The portal copies a one-sentence setup prompt that names your organization and project.
+3. Paste the prompt into your coding agent.
+
+The prompt looks like this:
+
+```text
+Fetch and execute the appropriate instructions to set me up for Datum Cloud from https://agents.datum.net/setup/prompt.md. Use organization `your-org-id` and project `your-project-id`.
+```
+
+The agent follows the hosted instructions to:
+
+- Install `datumctl` and every official plugin.
+- Install and connect [Datum MCP](/agents/datum-mcp), the [Datum Docs MCP](/agents/datum-mcp#datum-docs-mcp) server, and the Datum [skills](/agents/skills/index) for its own agent type.
+- Add Datum's Claude Code plugins, when you use Claude Code.
+- Sign you in and switch to the project named in the prompt.
+- Report back on what it set up.
+
 ## Set up Claude Code
 
 Install `datumctl` and `datum-mcp`, then add Datum's Claude Code plugins in one command:
