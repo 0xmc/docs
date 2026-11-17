@@ -7,6 +7,105 @@ noindex: true
 
 Each entry links to the original announcement in our [changelog discussions](https://github.com/orgs/datum-cloud/discussions/categories/changelog), where you can ask questions and leave feedback. To see what is coming next, read the [roadmap](/platform/roadmap).
 
+<Update label="November 16, 2026" description="Cloud Portal" tags={["AX/DX/UX"]}>
+  ## Onboard your coding agent from project home
+
+  The project home page in the [Cloud Portal](https://cloud.datum.net) can now set up a coding agent for your project with one paste.
+
+  - **Onboard your agent to Datum:** click the pill on project home to copy a one-sentence setup prompt. Paste it into Claude Code, Codex, Cursor, Copilot, or another coding agent.
+  - **Ready in the right context:** the prompt names your organization and project. The agent installs `datumctl` and every official plugin, connects the Datum MCP server, the Docs MCP server, and the Datum skills, signs in, and switches to your project.
+  - **Easier to read:** each resource list is a card with a **View all** link, one status strip names the project's VPC, and next steps show as tiles with an **Ask Patch** card underneath.
+  - **Empty projects:** a project with nothing in it shows the **Ask Patch** box in place of search.
+  - **No layout jump:** the page keeps its shape while it loads.
+  - **Fixed:** services your project isn't entitled to no longer appear in the sidebar, home cards, or header. Before, clicking one led to "Service not found".
+
+  See [Agents overview](/agents/overview).
+
+  Details: [Add 'Onboard your agent to Datum' copy-prompt pill to project home](https://github.com/datum-cloud/cloud-portal/issues/1797) (#1797)
+</Update>
+
+<Update label="November 16, 2026" description="Organizations" tags={["Fix"]}>
+  ## Invitations last seven days, and editors can enable services
+
+  People you invite have time to create a Datum account before the invitation runs out, and editors no longer need an owner to turn on a service.
+
+  - **Seven-day invitations:** invitations now expire after seven days instead of 24 hours. Before, invitees new to Datum often lost the invitation before they finished signing up.
+  - **Expiry you can see:** pending invitations on the team page show when they expire, such as "Expires in 6 days", and expired ones show an **Expired** badge.
+  - **Dead links explain themselves:** opening an expired or replaced invitation says "This invitation has expired" and asks you to get a new one from the person who invited you, instead of a generic error. Links that were already accepted or declined say so.
+  - **Editors can enable services:** organization editors can now enable, update, and turn off services such as Compute in their organization's projects, from the portal or `datumctl`. Before, the request was refused and an owner had to do it. Enabling a service starts billing for it.
+  - **Owner-only settings:** only organization owners can change an organization's general, contact, and delete settings. Other members see the settings with the note "Only organization owners can make changes."
+
+  See [Team management](/organizations/team-management).
+
+  Details: [Invitations expire before new users can sign up and accept them](https://github.com/datum-cloud/cloud-portal/issues/1823) (#1823), [Let organization editors manage service entitlements](https://github.com/datum-cloud/datum/pull/330) (#330)
+</Update>
+
+<Update label="November 16, 2026" description="Organizations" tags={["AX/DX/UX"]}>
+  ## Let colleagues join by email domain
+
+  Organization owners can let anyone with a work email at their company's domains join the organization without an invitation.
+
+  - **Allowed email domains:** in the organization's **General** settings, owners pick domains from the verified [Domains](/domain-dns/domains) in the organization's projects, and choose the role people get when they join.
+  - **Clear status:** a badge shows whether joining is **On**, **Paused**, or **Checking**. When joining is paused, a warning gives the reason.
+  - **Offers, not automatic membership:** people at an allowed domain see an offer in the notification bell, such as "Your **acme.com** email address lets you join **Acme** organization as Viewer". New users see it during onboarding. Nobody joins without accepting.
+  - Public email providers can't be used as allowed domains.
+  - Owners can turn joining off at any time.
+
+  Details: [Let people join an organization by email domain, and email owners when someone joins](https://github.com/datum-cloud/cloud-portal/issues/1709) (#1709)
+</Update>
+
+<Update label="November 16, 2026" description="datumctl" tags={["Fix"]}>
+  ## Console works with organization-wide contexts
+
+  Two `datumctl console` bugs reported by a customer are fixed.
+
+  - **No false permission errors:** with an organization-wide context, lists such as Workloads showed `forbidden ... at the cluster scope` for every role, including owners. The console now lists the organization's own resources, and the quota banner shows the organization's quota instead of an error.
+  - **Context switches apply under `--session`:** with `--session` or `DATUM_SESSION` set, picking a context in the switcher changed the header but not the requests. Requests now go to the context you pick, and nothing is written to your saved config.
+  - **No stray stack traces:** opening the context switcher late in a session no longer prints a stack trace over the console.
+
+  See [Interactive console](/datumctl/console).
+
+  Details: [List the org namespace in org-wide console mode and stop stray stack traces](https://github.com/datum-cloud/datumctl/pull/365) (#365), [Follow console context switches under a session override](https://github.com/datum-cloud/datumctl/pull/366) (#366)
+</Update>
+
+<Update label="November 13, 2026" description="gVPC" tags={["Fix"]}>
+  ## Fewer network dropouts for instances
+
+  Instances on a gVPC network keep their internet access and DNS lookups through two failures that used to interrupt them.
+
+  - **No repeated egress blackouts:** replies from the internet to an instance could be dropped for several seconds at a time, over and over, while every component reported healthy. DNS lookups to public resolvers timed out and other internet traffic stalled. Datum now delivers those replies while it relearns the route back to the instance.
+  - **Moved instances keep DNS:** when an instance was recreated on a different host, its DNS lookups could be denied for minutes. Datum now removes the old host's record of the instance when the instance stops there.
+
+  See [gVPC troubleshooting](/galactic-vpc/troubleshooting).
+
+  Details: [NAT replies to a tenant node drop for seconds when the kernel collects its next hop's neighbor entry](https://github.com/datum-cloud/galactic/issues/1392) (#1392), [Attachment status flips between nodes after an instance moves, dropping its routes](https://github.com/datum-cloud/galactic/issues/1385) (#1385)
+</Update>
+
+<Update label="November 13, 2026" description="Billing" tags={["AX/DX/UX"]}>
+  ## See how and when contract fees are billed
+
+  The **Contract** section of a billing account in the [Cloud Portal](https://cloud.datum.net) now shows how often each fee is charged and which invoices are coming.
+
+  - **Fee terms:** each recurring fee shows its amount per month, quarter, or year, such as "$20,000 / quarter", how often it's charged, and whether it's billed in advance or in arrears.
+  - **Fees with a set term** say how long they run and when they end, such as "For 3 years, until November 12, 2029".
+  - **Upcoming invoices:** the next invoice, plus any in the coming year that charges a one-time, quarterly, or annual fee. Each lists its fees, their total ("plus usage" when usage is billed), and its due date from your payment terms.
+  - Upcoming invoices are estimates, before discounts and tax.
+
+  See [Contracts](/organizations/billing#contracts).
+
+  Details: [Show customers how and when their contract's fees are billed](https://github.com/datum-cloud/cloud-portal/pull/1815) (#1815)
+</Update>
+
+<Update label="November 13, 2026" description="DNS" tags={["Fix"]}>
+  ## Add DKIM and other underscore records in the portal
+
+  - **Fixed:** adding a DNS record whose name has an underscore after a dot, such as a DKIM record at `<selector>._domainkey`, no longer fails with "A lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters". The record keeps its name exactly as you typed it, underscores included.
+
+  See [Authoritative DNS](/domain-dns/dns).
+
+  Details: [Let DKIM and other underscore records be added](https://github.com/datum-cloud/cloud-portal/pull/1817) (#1817)
+</Update>
+
 <Update label="November 12, 2026" description="datumctl" tags={["Fix"]}>
   ## Pick the right private zone with `--vpc`
 
