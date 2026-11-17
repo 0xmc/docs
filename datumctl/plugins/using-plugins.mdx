@@ -154,6 +154,21 @@ To upgrade every plugin you have installed at once, run `datumctl plugin upgrade
 
 `plugin upgrade` runs the same verified install flow as a fresh install.
 
+### Deprecated plugins
+
+When a catalog marks a plugin as deprecated, usually because it moved to another catalog, datumctl prints a warning when you install, restore, or upgrade that plugin. `plugin upgrade` prints it whether or not a newer version was installed. The install or upgrade still completes. The warning names the replacement and the commands to switch to it:
+
+```text
+warning: deploy is deprecated: deploy moved to the ACME Platform catalog.
+  To switch to the replacement:
+    datumctl plugin index add acme-platform acme-platform/datumctl-plugins
+    datumctl plugin install acme-platform/deploy
+```
+
+If you already added the replacement's catalog, the warning shows only the `datumctl plugin install` line, using the name you gave that catalog. If your organization's policy disables that catalog, the warning says so instead of suggesting commands.
+
+Run the suggested commands to switch. After `datumctl plugin install <catalog>/<name>`, datumctl records the plugin as installed from the new catalog, so `plugin upgrade` uses that catalog and the warning stops. Plugins installed directly from a GitHub release never show this warning.
+
 ## How plugins stay trustworthy
 
 datumctl treats a plugin as untrusted code and protects you in a few ways:

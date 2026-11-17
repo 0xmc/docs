@@ -155,6 +155,8 @@ spec:
 
 `replacement.catalog` is a catalog source, not a catalog name, because each user picks their own name when they add a catalog. datumctl recognizes the replacement's catalog by comparing sources. For GitHub sources, it matches by owner and repository regardless of case or branch, so `acme-platform/datumctl-plugins`, `github.com/acme-platform/datumctl-plugins`, and `https://raw.githubusercontent.com/acme-platform/datumctl-plugins/main/index.yaml` all name the same catalog.
 
+Users who install, restore, or upgrade a deprecated plugin see a warning that names the replacement and the commands to switch to it. See [Deprecated plugins](/datumctl/plugins/using-plugins#deprecated-plugins).
+
 A deprecated entry stays installable and upgradable until you remove it from your catalog. Keep publishing releases to it during the deprecation period. datumctl releases without deprecation support ignore the `deprecated` block and keep installing and upgrading the plugin as usual.
 
 ## Versioning guidance
