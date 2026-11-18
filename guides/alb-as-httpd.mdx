@@ -486,7 +486,7 @@ An app that worked behind its old proxy can still fail behind the ALB, because s
 - **Uploads**: the WAF rejects large request bodies, even in Observe mode. See [WAF](https://github.com/datum-labs/shorts/blob/main/gists/alb/alb-as-httpd-reference.md#waf) in the reference and [WAF configuration](/alb/configuration/waf).
 - **WebSockets**: supported to Compute workloads, and not ended by the response timeout. See [WebSockets](/alb/request-handling#websockets).
 - **Rate limits**: counted per edge node, not across the whole ALB. See [Rate limits](https://github.com/datum-labs/shorts/blob/main/gists/alb/alb-as-httpd-reference.md#rate-limits).
-- **Client IP**: your app reads it from forwarded headers. See [Find the client's IP address](/alb/request-handling#find-the-clients-ip-address).
+- **Client IP**: your app reads it from forwarded headers. See [Find the client's IP address](/alb/request-handling#find-the-client’s-ip-address).
 
 ### Response timeout
 
