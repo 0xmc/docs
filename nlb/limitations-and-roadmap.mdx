@@ -13,7 +13,7 @@ Network Load Balancers are in early access. This page lists what they don't supp
 - **No large UDP datagrams.** A UDP datagram with more than 1392 bytes of payload is fragmented, and fragments are dropped. See [Packet size](/nlb/traffic-handling#packet-size).
 - **No per-Instance health in status.** The NLB's status shows when a location has no healthy Instance, but not which Instances fail their health check. See [Observability](/nlb/observability).
 - **No connections from the same location.** A Datum Instance can't reach an NLB address in its own location. See [Clients on Datum](/nlb/traffic-handling#clients-on-datum).
-- **No failover between locations.** Each location has its own address, and traffic to it goes only to Instances in that location. See [Addresses and hostnames](/nlb/addresses-and-hostnames).
+- **No failover between locations.** Each location has its own address, and traffic to it goes only to Instances in that location. See [Choose locations](/nlb/configuration#choose-locations).
 - **One address for each listener.** Two listeners can't share an address, so a TCP and a UDP listener on one NLB get different addresses and hostnames.
 - **One port for each listener.** Port ranges, such as a UDP range for a media server, aren't available.
 - **One backend for each route.** To spread traffic, scale the workload behind the network service.

@@ -198,8 +198,7 @@
                 "group": "NLB",
                 "pages": [
                   "nlb/overview",
-                  "nlb/listeners-and-routes",
-                  "nlb/addresses-and-hostnames",
+                  "nlb/configuration",
                   "nlb/health-checks",
                   "nlb/traffic-handling",
                   "nlb/operations",

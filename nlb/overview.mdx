@@ -50,9 +50,9 @@ flowchart LR
   linkStyle 0,1,2,3 stroke:#5A5F6B,stroke-width:1.4px
 ```
 
-- **An address in each location.** Datum gives the NLB a public IPv6 address and a generated hostname in each location where its backend workload has Instances. A client that connects to a location's address reaches an Instance in that location. Unlike the ALB, an NLB address isn't anycast, and traffic doesn't move to another location when a location has no healthy Instance. See [Addresses and hostnames](/nlb/addresses-and-hostnames).
+- **An address in each location.** Datum gives the NLB a public IPv6 address and a generated hostname in each location where its backend workload has Instances. A client that connects to a location's address reaches an Instance in that location. Unlike the ALB, an NLB address isn't anycast, and traffic doesn't move to another location when a location has no healthy Instance. See [Address requests](/nlb/configuration#address-requests).
 - **Listeners accept traffic.** A listener accepts one protocol, TCP or UDP, on one public port.
-- **Routes pick the backend.** A route connects a listener to a named port on a [network service](/galactic-vpc/networks/network-services), which selects your workload's Instances. The public port and the port your app listens on can differ. See [Listeners and routes](/nlb/listeners-and-routes).
+- **Routes pick the backend.** A route connects a listener to a named port on a [network service](/galactic-vpc/networks/network-services), which selects your workload's Instances. The public port and the port your app listens on can differ. See [Routes](/nlb/configuration#routes).
 - **Health checks decide which Instances get traffic.** Datum checks each Instance over TCP every 5 seconds, and sends new connections only to healthy ones. See [Health checks](/nlb/health-checks).
 - **Each connection stays on one Instance.** Datum spreads connections and UDP flows across healthy Instances by hashing each one's addresses and ports, so packets of the same connection or flow keep reaching the same Instance. See [How the NLB handles traffic](/nlb/traffic-handling).
 
@@ -80,8 +80,8 @@ The [Cloud Portal](https://cloud.datum.net) creates the NLB and its route togeth
   <Card title="Operations" icon="rocket" href="/nlb/operations">
     Prepare a backend, create an NLB, and connect to it.
   </Card>
-  <Card title="Listeners and routes" icon="diagram-project" href="/nlb/listeners-and-routes">
-    How listeners accept traffic, and how routes send it to your workload.
+  <Card title="Configuration" icon="diagram-project" href="/nlb/configuration">
+    Listeners, routes, addresses and hostnames, locations, and your own domain.
   </Card>
   <Card title="Health check a UDP service" icon="heart-pulse" href="/nlb/health-checks#health-check-a-udp-service">
     Publish a UDP port, with a TCP port for health checks.

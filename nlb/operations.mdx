@@ -1,10 +1,10 @@
 ---
 title: "NLB operations"
 sidebarTitle: "Operations"
-description: "Prepare a backend, then create, connect to, inspect, change, and delete Network Load Balancers and their routes, in the Cloud Portal or with manifests and datumctl."
+description: "Prepare a backend, then create, check, connect to, and delete a Network Load Balancer, in the Cloud Portal or with manifests and datumctl."
 ---
 
-This page covers the everyday tasks for a [Network Load Balancer](/nlb/overview) (NLB), from preparing a backend to deleting the NLB. The examples publish a small TCP echo server on public port `7000`. The same steps work for any TCP service, such as a database.
+This page walks through a [Network Load Balancer](/nlb/overview) (NLB) from preparing a backend to deleting the NLB. To change a running NLB or use your own domain, see [Configuration](/nlb/configuration). The examples publish a small TCP echo server on public port `7000`. The same steps work for any TCP service, such as a database.
 
 There's no `datumctl nlb` command yet. Use the [Cloud Portal](https://cloud.datum.net), or describe NLBs and routes in manifests and apply them with `datumctl apply`.
 
@@ -173,7 +173,7 @@ networkloadbalancer.networking.datumapis.com/echo-nlb created
 networkloadbalancerroute.networking.datumapis.com/echo-nlb-tcp-7000 created
 ```
 
-For a UDP listener, set `protocol: UDP` on the listener, and set `healthCheck.port` to the name of a TCP port on the network service. See [Health check a UDP service](/nlb/health-checks#health-check-a-udp-service). For every field, see [Listeners and routes](/nlb/listeners-and-routes) and [Addresses and hostnames](/nlb/addresses-and-hostnames).
+For a UDP listener, set `protocol: UDP` on the listener, and set `healthCheck.port` to the name of a TCP port on the network service. See [Health check a UDP service](/nlb/health-checks#health-check-a-udp-service). For every field, see [Configuration](/nlb/configuration).
 
 To check a manifest without creating anything, run `datumctl apply --dry-run=server -f echo-nlb.yaml`. A dry run catches unsupported features, but not quota.
 
@@ -278,49 +278,6 @@ If `nc` fails with `Network is unreachable`, your computer doesn't have IPv6. Co
 
 4. When you're done, delete the client with `datumctl compute destroy nlb-client`.
 
-## Add a listener
-
-In the Cloud Portal, open the NLB, and click **Add listener** in the listeners table.
-
-With a manifest, add an address request, a listener, and a route. In early access, each listener needs its own address request, so the new listener gets its own IPv6 address and hostname:
-
-```yaml
-spec:
-  exposure:
-    addresses:
-      - name: tcp-7000
-        families: ["IPv6"]
-      - name: udp-5353
-        families: ["IPv6"]
-  listeners:
-    - name: tcp-7000
-      protocol: TCP
-      port: 7000
-      addressRefs: ["tcp-7000"]
-    - name: udp-5353
-      protocol: UDP
-      port: 5353
-      addressRefs: ["udp-5353"]
-```
-
-Apply the changed file, along with a new `NetworkLoadBalancerRoute` for the new listener. The new route must send traffic to a network service port that no other route uses. If it uses the same port as an existing route, the NLB reports `BackendClaimConflict` and stops being `Ready`, although the existing listener keeps serving. The existing listener's address and hostname don't change.
-
-## Change where a listener sends traffic
-
-Edit the route's `backends`, and apply it again. You can change the network service, its port, or the health check port. To edit the route in place, run the following command:
-
-```bash
-datumctl edit networkloadbalancerroute echo-nlb-tcp-7000
-```
-
-The change reaches each location within seconds. New connections go to the new backend. To move traffic to a new version of your app without a new route, deploy the new version to the same workload instead.
-
-## Remove a listener
-
-In the Cloud Portal, delete the listener from the listeners table. An NLB needs at least one listener, so to remove the last one, delete the NLB.
-
-With a manifest, delete the listener's route, and then remove the listener and its address request from the NLB, and apply it. Datum releases the listener's address and removes its DNS record within about 15 seconds. Resolvers that cached the record keep it for up to 60 seconds. `READY` can show `False` for a few seconds after the change.
-
 ## Delete an NLB
 
 Delete its routes first, and then the NLB:
@@ -346,57 +303,7 @@ datumctl delete networkservice echo
 datumctl compute destroy echo
 ```
 
-## Use your own domain
+## What's next
 
-To give an NLB a name on your own domain, such as `db.example.com`, point a `CNAME` record at one of its generated hostnames. Clients then connect to `db.example.com` on the listener's port. The record sends clients to one location. See [Use your own domain](/nlb/addresses-and-hostnames#use-your-own-domain) for how names, the apex, and TLS work.
-
-Unlike an [Application Load Balancer](/alb/overview), an NLB doesn't need your domain added to it, and it doesn't issue a certificate for it. If clients use TLS, your workload must present a certificate for your domain.
-
-<Note>
-  If your DNS is hosted somewhere else, create a `CNAME` to the NLB's generated hostname at your own DNS provider, and skip the following steps.
-</Note>
-
-When Datum hosts your domain's DNS, use the `datumctl dns` plugin. To install it, run `datumctl plugin install dns`.
-
-<Steps>
-  <Step title="Find the NLB's hostname">
-    Each address has a generated hostname for its location. To list them, run:
-
-    ```bash
-    datumctl get networkloadbalancer NLB_NAME \
-      -o jsonpath='{range .status.endpoints[*]}{.location}{"\t"}{.requestName}{"\t"}{.canonicalHostname}{"\n"}{end}'
-    ```
-
-    Each line shows a location, an address request, and its hostname. Pick the hostname for the location and listener that you want. The NLB must be ready first. See [Check that an NLB is serving](#check-that-an-nlb-is-serving).
-  </Step>
-  <Step title="Create the zone, if you haven't already">
-    ```bash
-    datumctl dns zone create example.com
-    ```
-
-    Then point your domain at Datum's nameservers. See [Point your domain at Datum](/domain-dns/operations#point-your-domain-at-datum).
-  </Step>
-  <Step title="Add the record">
-    ```bash
-    datumctl dns record set example.com db CNAME GENERATED_HOSTNAME.
-    ```
-
-    Replace `GENERATED_HOSTNAME` with the NLB's hostname, and keep the trailing dot.
-
-    To use the apex, `example.com`, create an `ALIAS` record instead, because a `CNAME` isn't allowed at the apex. See [ALIAS](/domain-dns/dns#alias-/-cname-flattening).
-
-    ```bash
-    datumctl dns record set example.com @ ALIAS GENERATED_HOSTNAME.
-    ```
-  </Step>
-  <Step title="Check that it works">
-    ```bash
-    datumctl dns record list example.com --type CNAME,ALIAS
-    dig +short AAAA db.example.com
-    ```
-
-    The record is live when its status is `Programmed`. `dig` returns the NLB's IPv6 address for that location.
-  </Step>
-</Steps>
-
-To create the same records with `DNSZone` and `DNSRecordSet` manifests, follow [Point a domain with manifests](/domain-dns/point-to-alb#point-a-domain-with-manifests), and use the NLB's hostname as `TARGET`.
+- To add, change, or remove listeners, point a name at your NLB, or see what each field does, read [Configuration](/nlb/configuration).
+- To see how traffic reaches your Instances, read [How the NLB handles traffic](/nlb/traffic-handling).

@@ -17,7 +17,7 @@ Each new TCP connection or UDP flow goes to one healthy Instance in the location
 - **Every packet of a connection or flow goes to the same Instance.** For UDP, a flow is the datagrams between one client address and port and the listener. Datagrams from the same client port keep reaching the same Instance.
 - **New connections spread out.** Different connections, even from the same client, can go to different Instances. Over many connections, each Instance gets about the same share.
 - **There's no session affinity.** A client that reconnects, or sends UDP from a new source port, can reach a different Instance. If your app keeps state for a client across connections, such as a game session, store that state where every Instance can reach it, or run one Instance in each location.
-- **Traffic stays in its location.** Connections to a location's address go only to Instances in that location. To serve clients from several locations, run Instances in each, and send clients to each location's hostname. See [Addresses and hostnames](/nlb/addresses-and-hostnames).
+- **Traffic stays in its location.** Connections to a location's address go only to Instances in that location. To serve clients from several locations, run Instances in each, and send clients to each location's hostname. See [Choose locations](/nlb/configuration#choose-locations).
 
 ## Clients on Datum
 
@@ -28,7 +28,7 @@ A Datum Instance can reach an NLB address in another location, but not in its ow
 | | What your app sees |
 | --- | --- |
 | Source address | The client's public IPv6 address. Datum doesn't replace it, so your app can log clients and limit them by address. |
-| Destination port | The network service port, such as `15432`, not the listener's port. See [Port mapping](/nlb/listeners-and-routes#port-mapping). |
+| Destination port | The network service port, such as `15432`, not the listener's port. See [Port mapping](/nlb/configuration#port-mapping). |
 | Data | Exactly what the client sent. TLS stays encrypted end to end. Datum doesn't add a PROXY protocol header. |
 | Health checks | A TCP connection every 5 seconds from an IPv6 link-local address (`fe80::...`), which is reset without data. See [Health checks](/nlb/health-checks). |
 
