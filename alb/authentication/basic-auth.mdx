@@ -1,6 +1,6 @@
 ---
 title: "Basic authentication"
-sidebarTitle: "Basic auth"
+sidebarTitle: "Basic Auth"
 description: "Require a username and password before requests reach your origin, with datumctl alb auth or an Envoy Gateway SecurityPolicy."
 ---
 
@@ -11,7 +11,7 @@ There are two ways to set it up:
 - **`datumctl alb auth`** is the quickest. One command sets the users, creates the Secret, and attaches the policy.
 - **A `SecurityPolicy` manifest** gives you full control, for example to keep the configuration in Git or to protect a single route.
 
-## Set up basic auth with datumctl alb
+## Set up Basic Auth with datumctl alb
 
 To protect a load balancer, pass one or more users, and give their password on standard input:
 
@@ -42,7 +42,7 @@ To see which usernames are allowed, run the following command:
 datumctl alb auth list ALB_NAME
 ```
 
-`datumctl alb describe ALB_NAME` also shows whether basic auth is on. To turn basic auth off, run the following command:
+`datumctl alb describe ALB_NAME` also shows whether Basic Auth is on. To turn Basic Auth off, run the following command:
 
 ```bash
 datumctl alb auth unset ALB_NAME
@@ -55,7 +55,7 @@ curl -s -o /dev/null -w '%{http_code}\n' https://HOSTNAME/            # 401
 curl -s -o /dev/null -w '%{http_code}\n' -u admin https://HOSTNAME/   # prompts for the password, then 200
 ```
 
-## Set up basic auth with a SecurityPolicy
+## Set up Basic Auth with a SecurityPolicy
 
 The rest of this page shows how to configure the same thing with [Envoy Gateway](https://gateway.envoyproxy.io/) resources, using `datumctl apply`.
 
@@ -148,7 +148,7 @@ This requirement exists to prevent accidental replication of unrelated secrets.
 
 Envoy Gateway currently supports **SHA-based htpasswd entries only**.
 
-Other formats (bcrypt, APR1) are **not supported** and will cause failures.
+Other formats, such as bcrypt and APR1, are **not supported** and cause failures.
 
 <Tabs>
   <Tab title="macOS / Linux">
@@ -225,7 +225,7 @@ The Secret must:
 
 ---
 
-### Step 4: Attach Basic Auth using a SecurityPolicy
+### Step 4: Attach Basic Auth with a SecurityPolicy
 
 Attach the policy to the **HTTPRoute**. This is the most reliable attachment point.
 
@@ -291,7 +291,7 @@ HTTP/1.1 401 Unauthorized
 WWW-Authenticate: Basic
 ```
 
-Browsers will display a login prompt.
+Browsers display a login prompt.
 
 ---
 
@@ -309,7 +309,7 @@ HTTP/1.1 200 OK
 
 ---
 
-## Cleanup / disable Basic Auth
+## Clean up or disable Basic Auth
 
 <Tabs>
   <Tab title="macOS / Linux">
@@ -370,7 +370,7 @@ datumctl get httproute --project $project --namespace $namespace
 
 ## Summary
 
-- HTTP Basic Auth is configured using **Envoy Gateway `SecurityPolicy`**
+- You configure HTTP Basic Auth with an **Envoy Gateway `SecurityPolicy`**
 - Secrets **must be explicitly synced** to edge clusters using the `gateway-sync` label
-- `{SHA}` htpasswd format is required — bcrypt and APR1 are not supported
+- `{SHA}` htpasswd format is required. Other formats, such as bcrypt and APR1, are not supported
 - Attaching policies to `HTTPRoute` is the most reliable approach
