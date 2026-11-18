@@ -1,6 +1,6 @@
 ---
 title: "Basic authentication"
-sidebarTitle: "Basic auth"
+sidebarTitle: "Basic Auth"
 description: "Require a username and password before requests reach your origin, with datumctl alb auth or an Envoy Gateway SecurityPolicy."
 ---
 
@@ -11,7 +11,7 @@ There are two ways to set it up:
 - **`datumctl alb auth`** is the quickest. One command sets the users, creates the Secret, and attaches the policy.
 - **A `SecurityPolicy` manifest** gives you full control, for example to keep the configuration in Git or to protect a single route.
 
-## Set up basic auth with datumctl alb
+## Set up Basic Auth with datumctl alb
 
 To protect a load balancer, pass one or more users, and give their password on standard input:
 
@@ -42,7 +42,7 @@ To see which usernames are allowed, run the following command:
 datumctl alb auth list ALB_NAME
 ```
 
-`datumctl alb describe ALB_NAME` also shows whether basic auth is on. To turn basic auth off, run the following command:
+`datumctl alb describe ALB_NAME` also shows whether Basic Auth is on. To turn Basic Auth off, run the following command:
 
 ```bash
 datumctl alb auth unset ALB_NAME
@@ -55,7 +55,7 @@ curl -s -o /dev/null -w '%{http_code}\n' https://HOSTNAME/            # 401
 curl -s -o /dev/null -w '%{http_code}\n' -u admin https://HOSTNAME/   # prompts for the password, then 200
 ```
 
-## Set up basic auth with a SecurityPolicy
+## Set up Basic Auth with a SecurityPolicy
 
 The rest of this page shows how to configure the same thing with [Envoy Gateway](https://gateway.envoyproxy.io/) resources, using `datumctl apply`.
 

@@ -72,7 +72,7 @@ Application Load Balancer (product)
 | **`TrafficProtectionPolicy`** | WAF policy (Observe / Enforce / Disabled) attached 1:1 to the proxy's Gateway |
 | **Gateway** (operator) | Provisioned from the HTTPProxy; WAF and auth policies target it |
 | **DNS + TLS** (operator) | Canonical hostname, DNSRecordSets, and ACME certificates from proxy status |
-| **SecurityPolicy** (optional) | Basic auth via [Envoy Gateway](https://gateway.envoyproxy.io/), backed by a Secret |
+| **SecurityPolicy** (optional) | Basic Auth via [Envoy Gateway](https://gateway.envoyproxy.io/), backed by a Secret |
 
 Portal create always POSTs an `HTTPProxy`, then attempts a matching `TrafficProtectionPolicy` (best-effort today if WAF attach fails). There's no composite ALB API yet. With `datumctl`, `datumctl alb create` creates the `HTTPProxy` and its `TrafficProtectionPolicy` for you (see [Create a load balancer](/alb/operations/overview#create-a-load-balancer)), or you can apply the resources yourself.
 

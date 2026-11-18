@@ -58,7 +58,6 @@
                 ],
                 "expanded": false
               },
-              "changelog",
               "get-involved"
             ]
           },
@@ -236,6 +235,9 @@
                   "domain-dns/domains",
                   "domain-dns/dns",
                   "domain-dns/private-dns",
+                  "domain-dns/private-dns-quickstart",
+                  "domain-dns/private-dns-zones",
+                  "domain-dns/private-dns-reference",
                   "domain-dns/operations",
                   "domain-dns/point-to-alb",
                   "domain-dns/observability",
