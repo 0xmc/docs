@@ -85,7 +85,7 @@ datumctl plugin install your-org/datumctl-example@v1.2.0
 Without a version, datumctl installs the release GitHub marks as latest. If the repository has published only pre-releases, datumctl installs the highest pre-release instead, and `datumctl plugin upgrade` follows newer pre-releases the same way.
 
 <Info>
-  If a bare name exists in more than one catalog, datumctl lists the matches instead of guessing. Qualify the name with its catalog (for example `acme/deploy`) to choose.
+  If a bare name exists in more than one catalog, datumctl lists the matches instead of guessing. Qualify the name with its catalog (for example `acme/deploy`) to choose. A deprecated plugin and its same-named replacement don't count as a collision; see [Deprecated plugins](#deprecated-plugins).
 </Info>
 
 ### Pinning a version
@@ -153,6 +153,31 @@ datumctl plugin remove compute
 To upgrade every plugin you have installed at once, run `datumctl plugin upgrade --all`. `datumctl plugin list` shows `update` in the `STATUS` column for any plugin with a newer version.
 
 `plugin upgrade` runs the same verified install flow as a fresh install.
+
+### Deprecated plugins
+
+When a catalog marks a plugin as deprecated, usually because it moved to another catalog, datumctl prints a warning when you install, restore, or upgrade that plugin. `plugin upgrade` prints it whether or not a newer version was installed. The install or upgrade still completes. The warning names the replacement and the commands to switch to it:
+
+```text
+warning: deploy is deprecated: deploy moved to the ACME Platform catalog.
+  To switch to the replacement:
+    datumctl plugin index add acme-platform acme-platform/datumctl-plugins
+    datumctl plugin install acme-platform/deploy
+```
+
+If you already added the replacement's catalog, the warning shows only the `datumctl plugin install` line, using the name you gave that catalog. If your organization's policy disables that catalog, the warning says so instead of suggesting commands.
+
+Run the suggested commands to switch. After `datumctl plugin install <catalog>/<name>`, datumctl records the plugin as installed from the new catalog, so `plugin upgrade` uses that catalog and the warning stops. Plugins installed directly from a GitHub release never show this warning.
+
+After you add the replacement's catalog, a bare-name install such as `datumctl plugin install ipam` installs the replacement when it has the same name. datumctl doesn't report that the name exists in multiple catalogs. It first prints this note to stderr, once for each deprecated match it skips:
+
+```text
+note: <name> in <catalog> is deprecated; installing its replacement from <catalog>
+```
+
+If other catalogs also have a plugin with that name, the collision error lists only those catalogs and the replacement. A replacement with a different name isn't picked this way. Install it with `datumctl plugin install <catalog>/<new-name>`.
+
+`datumctl plugin install --all-available` skips a deprecated plugin you haven't installed and prints `Skipped <name>: deprecated`. A deprecated plugin you already have is still upgraded, or reported as up to date, and datumctl prints its deprecation warning.
 
 ## How plugins stay trustworthy
 
