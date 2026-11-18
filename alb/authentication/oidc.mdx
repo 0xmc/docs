@@ -116,13 +116,13 @@ Make sure your provider is up before you apply the policy. If Envoy can't load t
 | `provider.issuer` | Your provider's issuer URL |
 | `clientID`, `clientSecret` | The client from Step 1. `clientSecret` names the Secret from Step 2. |
 | `redirectURL` | Where the provider sends people back. Must match the URL registered in Step 1. Defaults to `/oauth2/callback` on the requested host. |
-| `logoutPath` | A path that clears the session cookies, such as `/logout` |
+| `logoutPath` | A path that clears the session cookies and redirects to `/`, such as `/logout` |
 | `scopes` | Scopes to request. `openid` is always added. Add `email` and `profile` to get those claims. |
 | `forwardAccessToken` | Sends the provider's access token to your origin as `Authorization: Bearer` |
 | `refreshToken` | Uses the refresh token to renew the session when the access token expires, instead of sending the person to sign in again |
 | `cookieNames.idToken` | Fixes the ID token cookie's name, so a `jwt` block can read it. See [Restrict who can sign in](#restrict-who-can-sign-in). |
-| `passThroughAuthHeader` | Lets requests that already carry a valid `Authorization: Bearer` token skip the sign-in redirect. Needs a `jwt` block. |
-| `denyRedirect` | Returns `401` instead of a redirect for requests that match given headers, such as API calls from a single-page app |
+| `passThroughAuthHeader` | Lets requests that already carry a valid `Authorization: Bearer` token skip the sign-in redirect, so scripts and services can call the same hostname as people. Needs a `jwt` block that accepts those tokens. A request with an invalid token gets `401`, not a redirect. |
+| `denyRedirect` | Returns `401` instead of a redirect for requests without a session that match given headers, such as `Accept: application/json` from a single-page app's API calls |
 
 Field names follow [Envoy Gateway's OIDC reference](https://gateway.envoyproxy.io/docs/api/extension_types/#oidc).
 
