@@ -14,10 +14,10 @@ Some clouds hide location behind a single global network, which is simple but le
 Datum takes the opposite approach: every Region and Availability Zone corresponds to an actual, named place, not an abstract label. When you deploy into `us-east-1`, that's a real facility in Ashburn, Virginia — not a logical construct spread invisibly across a continent. This gives you three things:
 
 - **Predictable latency** — Regions are grouped by real network distance, so you can reason about how fast your app will respond to users in a given area.
-- **Data sovereignty and compliance** — because each Region maps to a specific country or jurisdiction, it's straightforward to keep data and workloads where regulations require.
+- **Data location** — because each Region maps to a specific country, you can reason about which jurisdiction your workloads run in. Regulatory and export-control requirements can still limit where a workload may run, and they take precedence over the placement rules below.
 - **Real choice and control** — you pick where things run based on your own requirements (proximity to users, legal residency, avoiding a single point of failure), the same way you would if you were choosing between physical data centers, rather than accepting one big undifferentiated "everywhere."
 
-Most customers pick a primary Region close to their users or required jurisdiction, then spread work across multiple Availability Zones in that Region for resilience. Some go further and deploy across multiple Regions entirely for extra redundancy or to serve users in more than one part of the world.
+Most customers pick a Region close to their users or their required jurisdiction. To add redundancy, or to serve users in more than one part of the world, deploy to more than one Region. To see which Regions your project can use today, see [Check what's available to your project](#check-whats-available-to-your-project).
 
 ## Naming convention
 
