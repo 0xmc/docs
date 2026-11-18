@@ -41,7 +41,7 @@ datumctl plugin search deploy --index acme
 
 Results show the plugin name, the catalog it came from, its version, its trust badge, and a short description.
 
-For scripts and coding agents, pass `-o json` or `-o name`. `-o json` prints an array of objects with `name`, `index`, `version`, `trust`, and `description` fields, or `[]` when nothing matches. `-o name` prints one plugin name per line:
+For scripts and coding agents, pass `-o json` or `-o name`. `-o json` prints an array of objects with `name`, `index`, `version`, `trust`, and `description` fields, or `[]` when nothing matches. A plugin its catalog marks deprecated also has a `deprecated` object with the catalog's `message` and `replacement`. `-o name` prints one plugin name per line:
 
 ```bash
 datumctl plugin search --index datum -o json
@@ -119,12 +119,13 @@ datumctl plugin list
 
 This shows each installed plugin with its catalog, version, trust badge, description, and a status indicator:
 
-| Status   | Meaning                                             |
-|----------|-----------------------------------------------------|
-| `ok`     | Installed and compatible with this datumctl.        |
-| `update` | A newer version is available in its catalog.        |
-| `!`      | Built for a different datumctl version.             |
-| `?`      | Version information is unavailable.                 |
+| Status       | Meaning                                             |
+|--------------|-----------------------------------------------------|
+| `ok`         | Installed and compatible with this datumctl.        |
+| `update`     | A newer version is available in its catalog.        |
+| `deprecated` | Its catalog marks the plugin deprecated. See [Deprecated plugins](#deprecated-plugins). |
+| `!`          | Built for a different datumctl version.             |
+| `?`          | Version information is unavailable.                 |
 
 ## Running an installed plugin
 
@@ -178,6 +179,12 @@ note: <name> in <catalog> is deprecated; installing its replacement from <catalo
 If other catalogs also have a plugin with that name, the collision error lists only those catalogs and the replacement. A replacement with a different name isn't picked this way. Install it with `datumctl plugin install <catalog>/<new-name>`.
 
 `datumctl plugin install --all-available` skips a deprecated plugin you haven't installed and prints `Skipped <name>: deprecated`. A deprecated plugin you already have is still upgraded, or reported as up to date, and datumctl prints its deprecation warning.
+
+Listings flag deprecated plugins too:
+
+- `datumctl plugin list` shows `deprecated` in the `STATUS` column in place of `update`. When a newer version also exists, datumctl still suggests `datumctl plugin upgrade`. A plugin built for a different datumctl version still shows `!`, and one without version information still shows `?`. After the table, datumctl prints the deprecation warning for each deprecated plugin to stderr, whatever its status. `plugin list` reads only the catalog indexes datumctl has cached, so run `datumctl plugin search` to refresh them.
+- `datumctl plugin search` adds `[deprecated]` before the description and prints the warning for each deprecated result to stderr after the table. With `-o json`, each deprecated result carries a `deprecated` object instead. `-o json` and `-o name` print no warnings.
+- `datumctl plugin browse` adds `(deprecated)` after the plugin name and shows the warning in the plugin's details.
 
 ## How plugins stay trustworthy
 
