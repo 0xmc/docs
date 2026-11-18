@@ -15,12 +15,13 @@ There's no `datumctl nlb` command yet. Use the [Cloud Portal](https://cloud.datu
 - To create, change, or delete NLBs and routes, you need the **Network Admin** role in the project. The **Network Viewer** role can view them. To deploy a backend, you also need permission to create Compute workloads.
 - The workload that you publish needs a [network service](/galactic-vpc/networks/network-services) with a named port for the traffic, on the same network as the NLB. For a UDP listener, the network service also needs a TCP port for health checks. See [Prepare a backend](#prepare-a-backend).
 - The workload must run in `us-central-1`, `us-east-1`, or `us-west-1`.
+- To connect from your own computer, it needs IPv6. NLBs don't serve IPv4. Without IPv6, you can test from a Datum Instance in another location instead. See [Connect without IPv6](#connect-without-ipv6).
 
 ## Prepare a backend
 
 An NLB sends traffic to a network service, which selects a workload's Instances and names their ports. If you already have both, skip to [Create an NLB](#create-an-nlb).
 
-1. Save the following workload as `echo.yaml`. It runs a Python echo server on port `7000`, in `us-central-1`:
+1. Save the following workload as `echo.yaml`. It runs `socat` from the `netshoot` image as an echo server on port `7000`, in `us-central-1`:
 
    ```yaml echo.yaml
    apiVersion: compute.datumapis.com/v1alpha
@@ -37,26 +38,9 @@ An NLB sends traffic to a network service, which selects a workload's Instances 
            sandbox:
              containers:
                - name: echo
-                 image: docker.io/library/python:3.12-alpine
-                 command: ["python3", "-u", "-c"]
-                 args:
-                   - |
-                     import socket, socketserver
-
-                     class Echo(socketserver.StreamRequestHandler):
-                         def handle(self):
-                             try:
-                                 for line in self.rfile:
-                                     self.wfile.write(line)
-                             except ConnectionResetError:
-                                 pass  # health checks reset the connection
-
-                     class Server(socketserver.ThreadingTCPServer):
-                         address_family = socket.AF_INET6
-                         allow_reuse_address = True
-                         daemon_threads = True
-
-                     Server(("::", 7000), Echo).serve_forever()
+                 image: docker.io/nicolaka/netshoot:v0.13
+                 command: ["socat"]
+                 args: ["TCP6-LISTEN:7000,fork,reuseaddr", "EXEC:cat"]
                  ports:
                    - name: echo
                      port: 7000
@@ -74,8 +58,8 @@ An NLB sends traffic to a network service, which selects a workload's Instances 
    Keep the following points in mind for your own workloads:
 
    - **`runtime.class: general-purpose`:** runs an ordinary container image. Without it, the workload uses the `unikernel` class, and the image doesn't start.
-   - **Listening on `::`:** Instances have IPv6 addresses only, so the server must listen on IPv6.
-   - **Handling `ConnectionResetError`:** the NLB's health check opens a connection and resets it every 5 seconds. Your server must survive that. See [Health checks](/nlb/health-checks).
+   - **Listening on `::`:** Instances have IPv6 addresses only, so the server must listen on IPv6. `TCP6-LISTEN` does.
+   - **Surviving health checks:** the NLB's health check opens a connection and resets it every 5 seconds. `socat` with `fork` handles each one on its own. Your server must also survive a reset connection. See [Health checks](/nlb/health-checks).
 
 2. Deploy it:
 
@@ -112,6 +96,10 @@ An NLB sends traffic to a network service, which selects a workload's Instances 
    If you have the `network` plugin, `datumctl network service create echo --workload=echo --port=echo:7000` creates the same service. It can't create UDP ports. See [Network services](/galactic-vpc/networks/network-services).
 
 ## Create an NLB
+
+<Warning>
+  An NLB publishes your workload's port to the whole internet. Datum doesn't filter clients by address, and the NLB has no firewall. Before you publish a service such as a database, make sure that it requires authentication, and preferably TLS.
+</Warning>
 
 ### In the Cloud Portal
 
@@ -247,7 +235,7 @@ If `nc` fails with `Network is unreachable`, your computer doesn't have IPv6. Co
            sandbox:
              containers:
                - name: client
-                 image: docker.io/nicolaka/netshoot:latest
+                 image: docker.io/nicolaka/netshoot:v0.13
                  command: ["sleep", "infinity"]
          networkInterfaces:
            - network:

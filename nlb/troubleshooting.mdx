@@ -24,8 +24,6 @@ Read the `Ready` condition first. When it isn't `True`, its reason tells you whe
 
 The `Ready` message names only one failing route, even when several are failing. After you fix it, check again.
 
-`Degraded` is `False` with reason `ListenerReadiness` on a healthy NLB. That's normal, and it doesn't tell you anything about backend health.
-
 ## The NLB has no address
 
 `Allocated` is `False` with reason `AllocationPending`, and `status.endpoints` has no `value` for the address.

@@ -28,7 +28,7 @@ A health check opens a TCP connection to the Instance on the probe port, and pas
 
 A new Instance starts out of rotation, so the earliest it gets traffic is about 10 seconds after its app starts accepting connections. An Instance that fails a check leaves rotation within about 5 seconds. Until then, new connections that reach it fail, for example with `Connection refused`.
 
-Leaving rotation stops new connections and UDP flows from reaching the Instance.
+Leaving rotation doesn't drain the Instance. New connections and UDP flows stop reaching it, and its open TCP connections also end within about 5 seconds, even when the app keeps them open. Clients must reconnect, and then reach a healthy Instance. Replacing or stopping an Instance ends its connections the same way.
 
 The NLB's health check is separate from the network service's view of which Instances are ready. An Instance must be ready in the network service **and** pass the NLB's health check to get traffic. The network service's `HEALTHY` count doesn't include the NLB's check.
 

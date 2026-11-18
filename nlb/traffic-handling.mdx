@@ -6,10 +6,6 @@ description: "How a Network Load Balancer spreads TCP connections and UDP flows 
 
 A Network Load Balancer forwards packets. It doesn't end connections, read the traffic, or change it. The client's TCP connection or UDP flow reaches your app as the client sent it, except for the destination address and port.
 
-<Note>
-  NLBs are in early access, and the behavior on this page can change.
-</Note>
-
 ## How connections are spread
 
 Each new TCP connection or UDP flow goes to one healthy Instance in the location that the client connected to. Datum picks the Instance with a hash of the connection's source and destination addresses, ports, and protocol. Then:
@@ -38,7 +34,7 @@ Your app must accept connections over IPv6. A server that listens only on `0.0.0
 
 ## Idle connections
 
-Datum doesn't document an idle timeout for NLB connections. TCP connections that are idle for 14 minutes stay open. If your protocol can leave a connection idle for longer, turn on TCP keepalives or send application-level keepalives, as you would behind any load balancer.
+Datum doesn't set a guaranteed idle timeout for NLB connections. In testing, TCP connections that were idle for 14 minutes stayed open. If your protocol can leave a connection idle for longer, turn on TCP keepalives or send application-level keepalives, as you would behind any load balancer.
 
 ## Packet size
 

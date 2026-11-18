@@ -7,25 +7,52 @@ description: "Set up an NLB's listeners, routes, and address requests, choose it
 An NLB accepts traffic on **listeners**, sends it to backends through **routes**, and gets its public IPv6 addresses and generated hostnames from **address requests**. This page covers each, and how to change them on a running NLB. To create your first NLB, see [Operations](/nlb/operations).
 
 <Note>
-  NLBs are in early access, and the `networking.datumapis.com/v1alpha` API can change. They serve public IPv6 addresses only, in `us-central-1` (Dallas), `us-east-1` (Ashburn), and `us-west-1` (San Jose). IPv4 isn't available yet.
+  NLBs are in early access, and the `networking.datumapis.com/v1alpha` API can change. See [Limitations and roadmap](/nlb/limitations-and-roadmap).
 </Note>
 
-## Listeners
+## A complete example
 
-A listener is an entry in the NLB's `spec.listeners`:
+The following manifest publishes a Postgres workload on public TCP port `5432`. It has one NLB with one listener, and one route that sends the listener's traffic to the `postgres` port of a network service named `db`:
 
-```yaml
+```yaml db-nlb.yaml
+apiVersion: networking.datumapis.com/v1alpha
+kind: NetworkLoadBalancer
+metadata:
+  name: db-nlb
 spec:
+  networkRef:
+    name: default            # the gVPC network of your Instances
   exposure:
     addresses:
-      - name: tcp-5432
+      - name: tcp-5432       # an address request: an IPv6 address and hostname in each location
         families: ["IPv6"]
   listeners:
     - name: tcp-5432
-      protocol: TCP
-      port: 5432
+      protocol: TCP          # TCP or UDP
+      port: 5432             # the public port that clients connect to
       addressRefs: ["tcp-5432"]
+---
+apiVersion: networking.datumapis.com/v1alpha
+kind: NetworkLoadBalancerRoute
+metadata:
+  name: db-nlb-tcp-5432
+spec:
+  parentRefs:
+    - name: db-nlb
+      listener: tcp-5432     # the listener that this route serves
+  backends:
+    - networkService:
+        name: db             # selects your workload's Instances
+        port: postgres       # the name of a port on the network service, not its number
+      healthCheck:
+        protocol: TCP
 ```
+
+The rest of this page covers each part. For a walkthrough that also creates the backend, see [Operations](/nlb/operations).
+
+## Listeners
+
+A listener is an entry in the NLB's `spec.listeners`. It accepts one protocol on one public port.
 
 | Field | Description |
 | --- | --- |
@@ -38,30 +65,25 @@ An NLB takes up to 16 listeners. The [Cloud Portal](https://cloud.datum.net) nam
 
 The API also has `portRange`, `hostname`, and `tls` fields, and a `TLS` protocol. Early access refuses them. See [Limitations and roadmap](/nlb/limitations-and-roadmap).
 
+### Address requests
+
+An address request is an entry in `spec.exposure.addresses`. Datum gives it a public IPv6 address and a generated hostname in each location, and a listener refers to it by name in `addressRefs`.
+
+| Field | Description |
+| --- | --- |
+| `name` | Required. A name for the address request, up to 63 lowercase letters, numbers, and hyphens. |
+| `families` | Required. `["IPv6"]`. Early access refuses `IPv4`. |
+| `locations` | Optional. Which locations get an address. See [Choose locations](#choose-locations). |
+
+In early access, each listener needs its own address request, and two listeners can't share one. So an NLB with a TCP listener and a UDP listener has two IPv6 addresses and two hostnames in each location, one for each listener. An NLB takes up to 16 address requests.
+
 ### TLS traffic
 
 A `TCP` listener forwards TLS traffic unchanged. Your workload keeps its own certificate and completes the TLS handshake with the client, and Datum never sees the decrypted traffic. Datum doesn't issue certificates for NLB hostnames, so get a certificate for a domain that you own and point that domain at the NLB. See [Use your own domain](#use-your-own-domain).
 
 ## Routes
 
-A route is a separate `NetworkLoadBalancerRoute` resource. It attaches to a listener and names the backend:
-
-```yaml
-apiVersion: networking.datumapis.com/v1alpha
-kind: NetworkLoadBalancerRoute
-metadata:
-  name: db-nlb-tcp-5432
-spec:
-  parentRefs:
-    - name: db-nlb
-      listener: tcp-5432
-  backends:
-    - networkService:
-        name: db
-        port: postgres
-      healthCheck:
-        protocol: TCP
-```
+A route is a separate `NetworkLoadBalancerRoute` resource. It attaches to a listener and names the backend, as in the [example](#a-complete-example).
 
 | Field | Description |
 | --- | --- |
@@ -95,31 +117,6 @@ A network service port can be the backend of only one route. A second route, on 
 ## The network
 
 An NLB serves one [gVPC network](/galactic-vpc/networks/overview), set in `spec.networkRef.name`, usually `default`. You can't change the network after you create the NLB. The network must carry IPv6. Instances' IPv6 addresses are how Datum reaches them.
-
-## Address requests
-
-An address request is an entry in `spec.exposure.addresses`, and listeners refer to it by name in `addressRefs`:
-
-```yaml
-spec:
-  exposure:
-    addresses:
-      - name: tcp-5432
-        families: ["IPv6"]
-  listeners:
-    - name: tcp-5432
-      protocol: TCP
-      port: 5432
-      addressRefs: ["tcp-5432"]
-```
-
-| Field | Description |
-| --- | --- |
-| `name` | Required. A name for the address request, up to 63 lowercase letters, numbers, and hyphens. |
-| `families` | Required. `["IPv6"]`. Early access refuses `IPv4`. |
-| `locations` | Optional. Which locations get an address. See [Choose locations](#choose-locations). |
-
-In early access, each listener needs its own address request, and two listeners can't share one. So an NLB with a TCP listener and a UDP listener has two IPv6 addresses and two hostnames in each location, one for each listener. An NLB takes up to 16 address requests.
 
 ## Choose locations
 
@@ -169,14 +166,7 @@ status:
           dnsPublished: true
 ```
 
-| Field | Description |
-| --- | --- |
-| `requestName` | The address request. |
-| `location` | The location. |
-| `canonicalHostname` | The generated hostname for this address request in this location. |
-| `addresses[].value` | The public IPv6 address. |
-| `addresses[].announced` | `true` while Datum announces the address to the internet. While the location has no healthy Instance, Datum stops announcing the address, and the field is missing. |
-| `addresses[].dnsPublished` | `true` once Datum has published the hostname's DNS record. |
+For what each field means, see [Addresses in each location](/nlb/observability#addresses-in-each-location).
 
 To list only the hostnames, run the following command:
 
@@ -218,14 +208,7 @@ When Datum hosts your domain's DNS, use the `datumctl dns` plugin. To install it
 
 <Steps>
   <Step title="Find the NLB's hostname">
-    Each address has a generated hostname for its location. To list them, run:
-
-    ```bash
-    datumctl get networkloadbalancer NLB_NAME \
-      -o jsonpath='{range .status.endpoints[*]}{.location}{"\t"}{.requestName}{"\t"}{.canonicalHostname}{"\n"}{end}'
-    ```
-
-    Each line shows a location, an address request, and its hostname. Pick the hostname for the location and listener that you want. The NLB must be ready first. See [Check that an NLB is serving](/nlb/operations#check-that-an-nlb-is-serving).
+    Pick the hostname for the location and listener that you want. See [Find the addresses and hostnames](#find-the-addresses-and-hostnames). The NLB must be ready first. See [Check that an NLB is serving](/nlb/operations#check-that-an-nlb-is-serving).
   </Step>
   <Step title="Create the zone, if you haven't already">
     ```bash
@@ -261,34 +244,55 @@ To create the same records with `DNSZone` and `DNSRecordSet` manifests, follow [
 
 ## Add a listener
 
-This section and the next two change a running NLB. They use the `echo-nlb` example from [Operations](/nlb/operations).
-
 In the Cloud Portal, open the NLB, and click **Add listener** in the listeners table.
 
-With a manifest, add an address request, a listener, and a route. In early access, each listener needs its own address request, so the new listener gets its own IPv6 address and hostname:
+With manifests, a new listener needs three things: a port on the network service that no other route uses, an address request and a listener on the NLB, and a route between them. The following example adds a UDP game server on public port `7777` to an NLB named `game-nlb`. It uses the `game` network service from [Health check a UDP service](/nlb/health-checks#health-check-a-udp-service), which has a UDP port named `game` and a TCP port named `health`:
 
-```yaml
-spec:
-  exposure:
-    addresses:
-      - name: tcp-7000
-        families: ["IPv6"]
-      - name: udp-5353
-        families: ["IPv6"]
-  listeners:
-    - name: tcp-7000
-      protocol: TCP
-      port: 7000
-      addressRefs: ["tcp-7000"]
-    - name: udp-5353
-      protocol: UDP
-      port: 5353
-      addressRefs: ["udp-5353"]
-```
+1. Make sure that the network service has a port for the new listener. For a UDP listener, it also needs a TCP port for health checks. See [Network services](/galactic-vpc/networks/network-services).
+2. Add an address request and a listener to the NLB. In early access, each listener needs its own address request, so the new listener gets its own IPv6 address and hostname:
 
-Apply the changed file, along with a new `NetworkLoadBalancerRoute` for the new listener. The new route must send traffic to a network service port that no other route uses. If it uses the same port as an existing route, the NLB reports `BackendClaimConflict` and stops being `Ready`, although the existing listener keeps serving. The existing listener's address and hostname don't change.
+   ```yaml
+   spec:
+     exposure:
+       addresses:
+         # ...existing address requests...
+         - name: udp-7777
+           families: ["IPv6"]
+     listeners:
+       # ...existing listeners...
+       - name: udp-7777
+         protocol: UDP
+         port: 7777
+         addressRefs: ["udp-7777"]
+   ```
+
+3. Create a route for the new listener:
+
+   ```yaml
+   apiVersion: networking.datumapis.com/v1alpha
+   kind: NetworkLoadBalancerRoute
+   metadata:
+     name: game-nlb-udp-7777
+   spec:
+     parentRefs:
+       - name: game-nlb
+         listener: udp-7777
+     backends:
+       - networkService:
+           name: game
+           port: game        # UDP 7777
+         healthCheck:
+           protocol: TCP
+           port: health      # TCP 8080
+   ```
+
+4. Apply both, and check that the NLB is `Ready`. See [Check that an NLB is serving](/nlb/operations#check-that-an-nlb-is-serving).
+
+The existing listeners' addresses and hostnames don't change. If the new route sends traffic to a port that another route already uses, it reports `BackendClaimConflict`, and the NLB stops being `Ready`, although the existing listeners keep serving.
 
 ## Change where a listener sends traffic
+
+This section and the next use the `echo-nlb` example from [Operations](/nlb/operations).
 
 Edit the route's `backends`, and apply it again. You can change the network service, its port, or the health check port. To edit the route in place, run the following command:
 
