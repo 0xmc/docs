@@ -75,6 +75,7 @@ A manifest with no header still parses — the only required content is the plug
 | `spec.description` | Optional | Longer text shown when inspecting the plugin. |
 | `spec.homepage` | Optional | The plugin's homepage. |
 | `spec.platforms` | Yes | One entry per supported OS/arch. |
+| `spec.deprecated` | Optional | Marks the plugin as deprecated and names its replacement. See [Deprecating a plugin](#deprecating-a-plugin). |
 
 **Each entry under `spec.platforms`:**
 
@@ -93,7 +94,7 @@ The binary inside each archive should be named `datumctl-<name>` (or `datumctl-<
 
 ## Validating before you publish
 
-Lint a manifest before you ship it. The validator reports missing plugin names or versions, missing or non-HTTPS download URIs, missing checksums, and invalid platform selectors:
+Lint a manifest before you ship it. The validator reports missing plugin names or versions, missing or non-HTTPS download URIs, missing checksums, invalid platform selectors, and `deprecated` blocks that have no `message` or no `replacement.catalog`:
 
 ```bash
 # Validate a local manifest
@@ -131,6 +132,32 @@ Enterprises can constrain which catalogs their users may add through an allow-li
 - Avoid moving the catalog between owners or hosts, which would require every enterprise to update their allow-list.
 
 See [Adding catalogs](/datumctl/plugins/adding-catalogs#enterprise-guardrails) for how allow-list entries are matched.
+
+## Deprecating a plugin
+
+When a plugin moves to another catalog, removing its entry right away breaks `datumctl plugin upgrade` for everyone who installed it from your catalog. Instead, keep the entry and mark it deprecated with a message and the plugin that replaces it:
+
+```yaml
+spec:
+  # ...version, platforms, and other fields as before
+  deprecated:
+    message: deploy moved to the ACME Platform catalog.
+    replacement:
+      catalog: acme-platform/datumctl-plugins   # a catalog source, as `plugin index add` takes
+      name: deploy                              # optional; defaults to this plugin's name
+```
+
+| Field | Required | Purpose |
+|-------|----------|---------|
+| `deprecated.message` | Yes | Explains why the plugin is deprecated or where it went. |
+| `deprecated.replacement.catalog` | Yes | The catalog source of the replacement plugin. |
+| `deprecated.replacement.name` | Optional | The replacement plugin's name. Defaults to the deprecated plugin's name. |
+
+`replacement.catalog` is a catalog source, not a catalog name, because each user picks their own name when they add a catalog. datumctl recognizes the replacement's catalog by comparing sources. For GitHub sources, it matches by owner and repository regardless of case or branch, so `acme-platform/datumctl-plugins`, `github.com/acme-platform/datumctl-plugins`, and `https://raw.githubusercontent.com/acme-platform/datumctl-plugins/main/index.yaml` all name the same catalog.
+
+Users who install, restore, or upgrade a deprecated plugin see a warning that names the replacement and the commands to switch to it. See [Deprecated plugins](/datumctl/plugins/using-plugins#deprecated-plugins).
+
+A deprecated entry stays installable and upgradable until you remove it from your catalog. Keep publishing releases to it during the deprecation period. datumctl releases without deprecation support ignore the `deprecated` block and keep installing and upgrading the plugin as usual.
 
 ## Versioning guidance
 

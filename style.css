@@ -167,47 +167,91 @@ a.nav-anchor {
 
 /* Active nav state */
 #navigation-items li[data-active="true"] > a {
-  background-color: #4D6356 !important;
-  color: #E6F59F !important;
+  background-color: #4d6356 !important;
+  color: #e6f59f !important;
   text-shadow: none !important;
 }
 
 .dark #navigation-items li[data-active="true"] > a {
-  background-color: #E6F59F !important;
-  color: #4D6356 !important;
+  background-color: #e6f59f !important;
+  color: #4d6356 !important;
   text-shadow: none !important;
 }
 /* Cards: subtle Datum-palette tint on every card. Cards in a group cycle
    rose, green, lime, slate; className="dc-<color>" picks one explicitly.
    :where() keeps the defaults at zero specificity so dc-* classes win. */
 .card {
-  background-image: linear-gradient(135deg, var(--dc-tint) 0%, transparent 65%) !important;
+  background-image: linear-gradient(
+    135deg,
+    var(--dc-tint) 0%,
+    transparent 65%
+  ) !important;
   border-color: var(--dc-edge) !important;
 }
 .card [data-component-part="card-icon"] svg {
   background-color: var(--dc-icon) !important;
 }
 :where(.card),
-:where(.card-group > .card:nth-child(4n+1)),
-.dc-rose  { --dc-tint: rgba(191, 149, 149, 0.22); --dc-edge: rgba(191, 149, 149, 0.45); --dc-icon: #BF9595; }
-:where(.card-group > .card:nth-child(4n+2)),
-.dc-green { --dc-tint: rgba(77, 99, 86, 0.20);    --dc-edge: rgba(77, 99, 86, 0.45);    --dc-icon: #4D6356; }
-:where(.card-group > .card:nth-child(4n+3)),
-.dc-lime  { --dc-tint: rgba(230, 245, 159, 0.45); --dc-edge: rgba(190, 205, 110, 0.55); --dc-icon: #8A9A2E; }
+:where(.card-group > .card:nth-child(4n + 1)),
+.dc-rose {
+  --dc-tint: rgba(191, 149, 149, 0.22);
+  --dc-edge: rgba(191, 149, 149, 0.45);
+  --dc-icon: #bf9595;
+}
+:where(.card-group > .card:nth-child(4n + 2)),
+.dc-green {
+  --dc-tint: rgba(77, 99, 86, 0.2);
+  --dc-edge: rgba(77, 99, 86, 0.45);
+  --dc-icon: #4d6356;
+}
+:where(.card-group > .card:nth-child(4n + 3)),
+.dc-lime {
+  --dc-tint: rgba(230, 245, 159, 0.45);
+  --dc-edge: rgba(190, 205, 110, 0.55);
+  --dc-icon: #8a9a2e;
+}
 :where(.card-group > .card:nth-child(4n)),
-.dc-slate { --dc-tint: rgba(12, 29, 49, 0.12);    --dc-edge: rgba(12, 29, 49, 0.25);    --dc-icon: #3B5B82; }
-.dc-red   { --dc-tint: rgba(196, 64, 52, 0.18);   --dc-edge: rgba(196, 64, 52, 0.45);   --dc-icon: #C44034; }
+.dc-slate {
+  --dc-tint: rgba(12, 29, 49, 0.12);
+  --dc-edge: rgba(12, 29, 49, 0.25);
+  --dc-icon: #3b5b82;
+}
+.dc-red {
+  --dc-tint: rgba(196, 64, 52, 0.18);
+  --dc-edge: rgba(196, 64, 52, 0.45);
+  --dc-icon: #c44034;
+}
 
 :where(.dark .card),
-:where(.dark .card-group > .card:nth-child(4n+1)),
-.dark .dc-rose  { --dc-tint: rgba(191, 149, 149, 0.20); --dc-edge: rgba(191, 149, 149, 0.40); --dc-icon: #D4A9A9; }
-:where(.dark .card-group > .card:nth-child(4n+2)),
-.dark .dc-green { --dc-tint: rgba(110, 145, 125, 0.22); --dc-edge: rgba(110, 145, 125, 0.45); --dc-icon: #8FB09E; }
-:where(.dark .card-group > .card:nth-child(4n+3)),
-.dark .dc-lime  { --dc-tint: rgba(230, 245, 159, 0.14); --dc-edge: rgba(230, 245, 159, 0.35); --dc-icon: #E6F59F; }
+:where(.dark .card-group > .card:nth-child(4n + 1)),
+.dark .dc-rose {
+  --dc-tint: rgba(191, 149, 149, 0.2);
+  --dc-edge: rgba(191, 149, 149, 0.4);
+  --dc-icon: #d4a9a9;
+}
+:where(.dark .card-group > .card:nth-child(4n + 2)),
+.dark .dc-green {
+  --dc-tint: rgba(110, 145, 125, 0.22);
+  --dc-edge: rgba(110, 145, 125, 0.45);
+  --dc-icon: #8fb09e;
+}
+:where(.dark .card-group > .card:nth-child(4n + 3)),
+.dark .dc-lime {
+  --dc-tint: rgba(230, 245, 159, 0.14);
+  --dc-edge: rgba(230, 245, 159, 0.35);
+  --dc-icon: #e6f59f;
+}
 :where(.dark .card-group > .card:nth-child(4n)),
-.dark .dc-slate { --dc-tint: rgba(120, 160, 210, 0.16); --dc-edge: rgba(120, 160, 210, 0.35); --dc-icon: #8FB0D8; }
-.dark .dc-red   { --dc-tint: rgba(230, 100, 88, 0.18);  --dc-edge: rgba(230, 100, 88, 0.45);  --dc-icon: #E66458; }
+.dark .dc-slate {
+  --dc-tint: rgba(120, 160, 210, 0.16);
+  --dc-edge: rgba(120, 160, 210, 0.35);
+  --dc-icon: #8fb0d8;
+}
+.dark .dc-red {
+  --dc-tint: rgba(230, 100, 88, 0.18);
+  --dc-edge: rgba(230, 100, 88, 0.45);
+  --dc-icon: #e66458;
+}
 
 /* Signed-in user menu in navbar (portal-user.js), styled after datum.net */
 .portal-user {
@@ -297,7 +341,9 @@ a.nav-anchor {
   margin-top: 8px;
   background-color: #fff;
   border: 1px solid #c3c6c9;
-  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.05), 1px 8px 8px 0 rgba(0, 0, 0, 0.02);
+  box-shadow:
+    0 4px 16px 0 rgba(0, 0, 0, 0.05),
+    1px 8px 8px 0 rgba(0, 0, 0, 0.02);
 }
 
 .portal-user-menu[hidden] {
@@ -402,6 +448,215 @@ a.nav-anchor {
 
 .dark .portal-signup svg {
   color: #0c1d31;
+}
+
+/* Values filled from the reader's account (docs-vars.js). Keeps the code
+   color; the dashed underline marks it as the reader's own. */
+.datum-var {
+  text-decoration: underline dashed;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
+/* Shiki resets text-decoration on every code span with !important in dark
+   mode (html.dark .shiki span), so outrank it here. */
+html .shiki span.datum-var,
+html.dark .shiki span.datum-var {
+  text-decoration: underline dashed 1px !important;
+}
+
+.datum-var:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Hover card for a placeholder token (docs-vars.js), styled like .portal-user-menu */
+.datum-var-tip {
+  --tip-fg: #0c1d31;
+  --tip-muted: #5b6672;
+  --tip-bg: #fff;
+  --tip-subtle: #f3f4f5;
+  --tip-border: #c3c6c9;
+  position: fixed;
+  z-index: 100;
+  width: max-content;
+  max-width: min(340px, calc(100vw - 16px));
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--tip-fg);
+  background-color: var(--tip-bg);
+  border: 1px solid var(--tip-border);
+  box-shadow:
+    0 4px 16px 0 rgba(0, 0, 0, 0.05),
+    1px 8px 8px 0 rgba(0, 0, 0, 0.02);
+}
+
+.dark .datum-var-tip {
+  --tip-fg: #fff;
+  --tip-muted: rgba(255, 255, 255, 0.64);
+  --tip-bg: #0c1d31;
+  --tip-subtle: rgba(255, 255, 255, 0.06);
+  --tip-border: rgba(255, 255, 255, 0.12);
+}
+
+.datum-var-tip[hidden] {
+  display: none;
+}
+
+.datum-var-tip p {
+  margin: 0;
+}
+
+/* Square like the card, not Mintlify's rounded inline-code pill. The id
+   outranks Mintlify's inline-code color and background. */
+#datum-var-tip code {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  overflow-wrap: anywhere;
+  color: var(--tip-fg);
+  background-color: var(--tip-subtle);
+  border-radius: 0;
+}
+
+.datum-var-tip-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--tip-subtle);
+  border-bottom: 1px solid var(--tip-border);
+}
+
+.datum-var-tip-kicker {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tip-muted);
+}
+
+#datum-var-tip .datum-var-tip-token {
+  padding: 1px 6px;
+  font-size: 0.8125rem;
+  background-color: var(--tip-bg);
+  border: 1px solid var(--tip-border);
+}
+
+.datum-var-tip-body {
+  padding: 12px 16px;
+}
+
+.datum-var-tip-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--tip-muted);
+}
+
+#datum-var-tip .datum-var-tip-value {
+  display: block;
+  margin-top: 4px;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: var(--tip-subtle);
+  border: 1px solid var(--tip-border);
+}
+
+.datum-var-tip-note {
+  margin-top: 10px !important;
+  font-size: 0.8125rem;
+  color: var(--tip-muted);
+}
+
+.datum-var-tip a {
+  color: var(--tip-fg);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.datum-var-tip-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--tip-border);
+}
+
+.datum-var-tip-copy {
+  padding: 4px 10px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--tip-fg);
+  border: 1px solid var(--tip-border);
+}
+
+.datum-var-tip-copy:hover:not(:disabled),
+.datum-var-tip-copy:focus-visible {
+  background-color: var(--tip-subtle);
+}
+
+/* Disabled until the reader picks a load balancer (ALB_NAME). */
+.datum-var-tip-copy:disabled {
+  color: var(--tip-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Load balancers to pick from when ALB_NAME has several. Scrolls past ~6. */
+.datum-var-tip-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  margin-top: 6px;
+  overflow-y: auto;
+}
+
+.datum-var-tip-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 4px 32px 4px 10px;
+  text-align: left;
+  color: var(--tip-fg);
+  border: 1px solid var(--tip-border);
+}
+
+.datum-var-tip-option:hover,
+.datum-var-tip-option:focus-visible {
+  background-color: var(--tip-subtle);
+}
+
+/* The picked one: a heavier border and a check mark. aria-pressed already
+   tells screen readers, so the mark has empty alt text. */
+.datum-var-tip-option[aria-pressed="true"] {
+  border-color: var(--tip-fg);
+  box-shadow: inset 0 0 0 1px var(--tip-fg);
+  background-color: var(--tip-subtle);
+}
+
+.datum-var-tip-option[aria-pressed="true"]::after {
+  content: "✓" / "";
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+#datum-var-tip .datum-var-tip-option-name {
+  font-weight: 600;
+  background-color: transparent;
+}
+
+.datum-var-tip-option-display {
+  font-size: 0.75rem;
+  color: var(--tip-muted);
 }
 
 /* Navbar right: theme selector first, bolder; "Status" last (Polylane-style) */
