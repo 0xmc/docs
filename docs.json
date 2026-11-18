@@ -198,15 +198,10 @@
                 "group": "NLB",
                 "pages": [
                   "nlb/overview",
-                  {
-                    "group": "Concepts",
-                    "root": "nlb/listeners-and-routes",
-                    "pages": [
-                      "nlb/addresses-and-hostnames",
-                      "nlb/health-checks",
-                      "nlb/traffic-handling"
-                    ]
-                  },
+                  "nlb/listeners-and-routes",
+                  "nlb/addresses-and-hostnames",
+                  "nlb/health-checks",
+                  "nlb/traffic-handling",
                   "nlb/operations",
                   "nlb/observability",
                   "nlb/troubleshooting",
