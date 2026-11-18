@@ -60,7 +60,7 @@ spec:
 
 `db.datum.internal` now resolves on that network only. You can't add records at or below `instances.datum.internal`, which Compute owns.
 
-You can also use the `datumctl dns` plugin, which needs DNS enabled in the project. See [Troubleshooting](/domain-dns/troubleshooting#dns-isnt-enabled-for-my-project). Every network has its own `datum.internal` zone. If your project has more than one network, add `--vpc` with the network's name to say which zone you mean:
+You can also use the `datumctl dns` plugin, which needs DNS enabled in the project. See [Troubleshooting](/domain-dns/troubleshooting#dns-isn’t-enabled-for-my-project). Every network has its own `datum.internal` zone. If your project has more than one network, add `--vpc` with the network's name to say which zone you mean:
 
 ```bash
 datumctl dns record create datum.internal db AAAA fd20:1::20 --vpc default
