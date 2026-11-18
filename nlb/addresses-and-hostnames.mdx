@@ -120,9 +120,11 @@ To serve an NLB on a domain that you own, such as `db.example.com`, create a `CN
 db.example.com.  CNAME  us-central-1.lively-otter-x7k2p.datumproxy.net.
 ```
 
-A `CNAME` can't be at the apex of a zone, such as `example.com`. If Datum hosts the domain's DNS, use an `ALIAS` record at the apex. See [Point a domain at an NLB](/domain-dns/point-to-nlb). With another DNS provider, use its `ALIAS` or flattening record if it has one. Otherwise, create an `AAAA` record with the location's address. An `AAAA` record doesn't follow the address if it changes, so update it if you recreate the NLB.
+A `CNAME` can't be at the apex of a zone, such as `example.com`. If Datum hosts the domain's DNS, use an `ALIAS` record at the apex. With another DNS provider, use its `ALIAS` or flattening record if it has one. Otherwise, create an `AAAA` record with the location's address. An `AAAA` record doesn't follow the address if it changes, so update it if you recreate the NLB.
 
 The NLB doesn't check the domain or issue a certificate for it. Clients that use TLS, such as `psql` with `sslmode=verify-full`, check the certificate that your workload presents, so the certificate must cover your domain.
+
+For the steps with Datum DNS, see [Use your own domain](/nlb/operations#use-your-own-domain).
 
 ## What's next
 

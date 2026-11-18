@@ -238,7 +238,6 @@
                   "domain-dns/private-dns",
                   "domain-dns/operations",
                   "domain-dns/point-to-alb",
-                  "domain-dns/point-to-nlb",
                   "domain-dns/observability",
                   "domain-dns/troubleshooting",
                   "domain-dns/limits-and-quotas",
