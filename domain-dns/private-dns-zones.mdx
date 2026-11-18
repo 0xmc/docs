@@ -6,7 +6,7 @@ description: "Add your own private names, choose which gVPC networks can resolve
 
 [Private DNS](/domain-dns/private-dns) publishes Instance names for you. This page covers the names you manage yourself: records in a network's `datum.internal` zone, private zones of your own, and which networks can resolve them.
 
-Manage these resources with `datumctl apply`, `datumctl get`, and `datumctl delete`. Your account needs the **DNS Admin** role to change them, and **DNS Viewer** to read them.
+Create private zones and associations with `datumctl apply`, and read and delete them with `datumctl get` and `datumctl delete`. You can add and change records with either `datumctl apply` or `datumctl dns record`. Your account needs the **DNS Admin** role to change them, and **DNS Viewer** to read them.
 
 ## How the pieces fit
 
@@ -59,6 +59,12 @@ spec:
 ```
 
 `db.datum.internal` now resolves on that network only. You can't add records at or below `instances.datum.internal`, which Compute owns.
+
+You can also use the `datumctl dns` plugin, which needs DNS enabled in the project. See [Troubleshooting](/domain-dns/troubleshooting#dns-isnt-enabled-for-my-project). Every network has its own `datum.internal` zone. If your project has more than one network, add `--vpc` with the network's name to say which zone you mean:
+
+```bash
+datumctl dns record create datum.internal db AAAA fd20:1::20 --vpc default
+```
 
 ## Create a private zone
 
@@ -125,6 +131,8 @@ spec:
       aaaa:
         content: fd20:1::6
 ```
+
+To use `datumctl dns record` instead, pass the zone's domain, such as `corp.internal`. If more than one network has a zone with that domain, the command stops and asks for `--vpc` with the name of the network you mean, as in `datumctl dns record list corp.internal --vpc default`.
 
 Private zones support `A`, `AAAA`, `CNAME`, `TXT`, `MX`, `SRV`, `CAA`, `NS`, `PTR`, `TLSA`, `HTTPS`, and `SVCB` records. For the rules that apply, see [Private DNS limits and behavior](/domain-dns/private-dns-reference#record-rules).
 

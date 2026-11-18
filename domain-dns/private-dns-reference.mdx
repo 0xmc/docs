@@ -47,7 +47,7 @@ Both [runtime classes](/compute/runtimes/overview), `general-purpose` and `unike
 
 | Limit | Value |
 | --- | --- |
-| Private zones a network can resolve, including `datum.internal` | 256. Keep to this or fewer: a 257th association isn't refused yet, but the network then stops picking up DNS changes. |
+| Private zones a network can resolve, including `datum.internal` | 256. An association past the limit is refused with the reason `ZoneLimitExceeded`. Zones already associated keep working. To make room, delete an association you don't need. |
 | Zone domain length | 253 characters |
 | Default TTL of a record you create | 300 seconds |
 | TTL of an Instance name | 30 seconds |

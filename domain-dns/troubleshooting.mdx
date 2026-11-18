@@ -112,6 +112,7 @@ datumctl get dnszoneassociation ASSOCIATION_NAME \
 | `ConflictingTTL` | One name in the record set has two different TTLs. | Use one TTL for each name. |
 | `InvalidRecord`, `InvalidTTL` | A value doesn't match its record type, or the TTL is out of range. | Fix the value. |
 | `ApexConflict` | Another zone with the same domain is associated with this network. The association whose name sorts first keeps the domain. | Delete the association you don't want. |
+| `ZoneLimitExceeded` | The network already resolves 256 private zones, including its `datum.internal` zone. | Delete an association you don't need, then create this one again. See [Limits](/domain-dns/private-dns-reference#limits). |
 | `InvalidReference` | The association's zone or DNS context doesn't exist, was deleted, or was replaced by a new one with the same name. | Check both names. If they exist, delete the association and create it again. |
 
 A request can also be refused when you apply it. A message that starts with `ReservedScope:` means the same as the reason above. A `not found` error, or one that mentions `private zone lookup` or `resolver context lookup`, means the zone or DNS context you named doesn't exist in the project.
