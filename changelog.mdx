@@ -7,6 +7,34 @@ noindex: true
 
 Each entry links to the original announcement in our [changelog discussions](https://github.com/orgs/datum-cloud/discussions/categories/changelog), where you can ask questions and leave feedback. To see what is coming next, read the [roadmap](/platform/roadmap).
 
+<Update label="November 18, 2026" description="datumctl" tags={["AX/DX/UX"]}>
+  ## Five plugins move to the Milo catalog
+
+  The `assistant`, `billing`, `ipam`, `search`, and `telemetry` plugins are now maintained in the Milo catalog, and datumctl v0.25.0 and later tells you how to switch.
+
+  - **Warnings that name the replacement:** installing or upgrading one of these plugins from the datum catalog prints a deprecation warning with the commands to switch to the Milo catalog. The install or upgrade still completes.
+  - **Nothing breaks yet:** older datumctl versions keep installing and upgrading these plugins from the datum catalog with no warnings. The datum catalog entries will be removed later, so switch before then.
+  - **Same plugin name after you switch:** once you add the Milo catalog, installing a plugin by its bare name, such as `search`, picks the Milo replacement instead of reporting a name collision.
+  - **Deprecated plugins stand out:** `datumctl plugin list`, `search`, and `browse` mark deprecated plugins and show their notice.
+  - **No new installs of moved plugins:** `datumctl plugin install --all-available` skips a deprecated plugin you haven't installed.
+
+  See [Deprecated plugins](/datumctl/plugins/using-plugins#deprecated-plugins).
+
+  Details: [Support deprecating a catalog plugin in favor of another](https://github.com/datum-cloud/datumctl/issues/355) (#355), [Point the Milo plugin entries at the Milo catalog](https://github.com/datum-cloud/datumctl-plugins/issues/266) (#266)
+</Update>
+
+<Update label="November 18, 2026" description="Cloud Portal" tags={["Fix"]}>
+  ## Find your country faster, on any screen
+
+  The country field in onboarding, billing addresses, and organization contact details is now searchable and works on phones.
+
+  - **Type to search:** start typing a country's name instead of scrolling the whole list.
+  - **Every country A to Z:** popular countries are listed first and also appear in the full A to Z list. Before, they were missing from it, so scrolling to "United States of America" didn't find it.
+  - **Works on phones:** the picker opens as a sheet from the bottom of the screen. Before, the onboarding dropdown ran off screen and its first options couldn't be reached.
+
+  Details: [Make the country picker searchable and list every country A–Z](https://github.com/datum-cloud/cloud-portal/pull/1827) (#1827)
+</Update>
+
 <Update label="November 16, 2026" description="Cloud Portal" tags={["AX/DX/UX"]}>
   ## Onboard your coding agent from project home
 
