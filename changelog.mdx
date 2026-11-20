@@ -7,6 +7,21 @@ noindex: true
 
 Each entry links to the original announcement in our [changelog discussions](https://github.com/orgs/datum-cloud/discussions/categories/changelog), where you can ask questions and leave feedback. To see what is coming next, read the [roadmap](/platform/roadmap).
 
+<Update label="November 19, 2026" description="Application Load Balancer" tags={["Fix"]}>
+  ## Streaming responses stay open for up to an hour
+
+  Load balancer responses are no longer cut off after about 15 seconds, so streams, large downloads, and slow APIs can finish.
+
+  - **Before:** every response through the edge was cut at about 15 seconds, including Server-Sent Events, streaming tool calls, and downloads through tunnels. Raising the limit took a separate traffic policy aimed at a route you never created.
+  - **Now:** each proxy rule has a request timeout that defaults to one hour. In testing, a 20-second streaming response completed through the edge with the default.
+  - **Set it per rule:** give a rule its own `timeouts.request` to cut slow responses sooner. A rule timeout overrides a `BackendTrafficPolicy` request timeout.
+  - **Clear errors:** a timeout of zero or above the platform maximum is refused when you apply it, with a message naming the field and the limit.
+
+  See [How long a response can stay open](/alb/request-handling#how-long-a-response-can-stay-open).
+
+  Details: [Streaming responses are cut off after fifteen seconds](https://github.com/datum-cloud/network-services-operator/issues/459) (#459)
+</Update>
+
 <Update label="November 18, 2026" description="datumctl" tags={["AX/DX/UX"]}>
   ## Five plugins move to the Milo catalog
 
