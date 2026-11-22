@@ -7,6 +7,22 @@ noindex: true
 
 Each entry links to the original announcement in our [changelog discussions](https://github.com/orgs/datum-cloud/discussions/categories/changelog), where you can ask questions and leave feedback. To see what is coming next, read the [roadmap](/platform/roadmap).
 
+<Update label="November 21, 2026" description="Network Load Balancer" tags={["AX/DX/UX", "Early access"]}>
+  ## See your NLB traffic in the portal
+
+  The [Cloud Portal](https://cloud.datum.net) now charts the inbound traffic each network load balancer receives, on the NLB page and on your project home.
+
+  - **Metrics tab:** each NLB page has a Metrics tab with inbound throughput, packets, dropped packets, and backends, one line per listener and per region. Filter by region or listener, pick a time range, and drag across a chart to zoom in.
+  - **Overview chart:** the "Connection metrics are coming soon" placeholder on the NLB overview is now a chart of the last hour of inbound throughput. Drag across it to open the Metrics tab on that window.
+  - **Project home:** a project with an NLB gets an NLB row in its Traffic section with data received, packets received, and dropped packets for the day. Before, a project with only an NLB was told to add a load balancer even while its NLB served traffic.
+  - **Busy ALBs no longer read zero:** a counter reset now drops only the 5 minutes it fell in from the day's totals, not the whole day. In testing, a project that read 0 requests served next to 6K WAF blocks now reads 768.
+  - **Inbound only:** replies go from your backend straight to the client without passing the NLB, so the portal shows no outbound traffic.
+
+  NLBs are early access. See [Network services](/galactic-vpc/networks/network-services).
+
+  Details: [Show NLB traffic metrics](https://github.com/datum-cloud/network-services-operator/issues/805) (#805), [Show network load balancer traffic on the project home](https://github.com/datum-cloud/cloud-portal/issues/1832) (#1832)
+</Update>
+
 <Update label="November 19, 2026" description="Application Load Balancer" tags={["Fix"]}>
   ## Streaming responses stay open for up to an hour
 
